@@ -1,5 +1,6 @@
 package com.eDiya.journalApp.controller;
 
+import com.eDiya.journalApp.cache.AppCache;
 import com.eDiya.journalApp.entity.User;
 import com.eDiya.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AppCache appCache;
+
     @GetMapping("/all-users")
     public ResponseEntity<?> getAllUsers(){
         List<User> all = userService.getAll();
@@ -29,4 +33,9 @@ public class AdminController {
         userService.saveAdmin(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-};
+
+    @GetMapping("/clear-app-cache")
+    public void cleareAppCache(){
+        appCache.init();
+    }
+}

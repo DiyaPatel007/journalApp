@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableTransactionManagement // will make container which consists of all the operations available in db ensures atomicity, isolation.
@@ -22,6 +23,10 @@ public class JournalApplication {
         return new MongoTransactionManager(dbFactory);
     }
 
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }
 
 //Mongo DB Factory --> Implementation --> SimpleMongoClientDatabaseFactory

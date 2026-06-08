@@ -1,8 +1,10 @@
 package com.eDiya.journalApp.controller;
 
+import com.eDiya.journalApp.api.response.WeatherResponse;
 import com.eDiya.journalApp.entity.User;
 import com.eDiya.journalApp.repository.UserRepository;
 import com.eDiya.journalApp.service.UserService;
+import com.eDiya.journalApp.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ public class  UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private WeatherService weatherService;
 //    @GetMapping
 //    public List<User> getAllUsers(){
 //        return userService.getAll();
@@ -45,6 +49,18 @@ public class  UserController {
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         userRepository.deleteByUserName(authentication.getName());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> greeting(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        userRepository.findByUserName(authentication.getName());
+        WeatherResponse weatherResponse = weatherService.getWeather("Mumbai");
+        String greeting ="";
+        if(weatherResponse != null){
+            greeting = ", Weather feels like " + weatherResponse.getCurrent().getFeelsLike();
+        }
+        return new ResponseEntity<>("Hi " + authentication.getName() + greeting,HttpStatus.OK);
     }
 
 
