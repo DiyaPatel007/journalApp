@@ -5,6 +5,7 @@ import com.eDiya.journalApp.entity.User;
 import com.eDiya.journalApp.repository.UserRepository;
 import com.eDiya.journalApp.service.UserService;
 import com.eDiya.journalApp.service.WeatherService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "User APIs", description = "Endpoints for user operations")
 public class  UserController {
     @Autowired
     private UserService userService;

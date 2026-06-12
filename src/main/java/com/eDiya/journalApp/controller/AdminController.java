@@ -3,6 +3,7 @@ package com.eDiya.journalApp.controller;
 import com.eDiya.journalApp.cache.AppCache;
 import com.eDiya.journalApp.entity.User;
 import com.eDiya.journalApp.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@Tag(name = "Admin APIs" , description = "Endpoints for admin operations")
 public class AdminController {
     @Autowired
     private UserService userService;

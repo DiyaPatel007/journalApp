@@ -5,6 +5,8 @@ import com.eDiya.journalApp.entity.JournalEntry;
 import com.eDiya.journalApp.entity.User;
 import com.eDiya.journalApp.service.JournalEntryService;
 import com.eDiya.journalApp.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/journal")
+@Tag(name = "Journal APIs",description = "Endpoints for journal entry operations")
 public class JournalEntryController {
 
     @Autowired
@@ -26,7 +29,9 @@ public class JournalEntryController {
 
     @Autowired
     private UserService userService;
+
     @GetMapping
+    @Operation(summary = "Get all journal entries of the authenticated user")
     public ResponseEntity<List<JournalEntry>> getAllJournalEntriesOfUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
@@ -51,15 +56,15 @@ public class JournalEntryController {
         }
     }
 
-    @GetMapping("id/{myId}")
-    public ResponseEntity<JournalEntry> getJournalEntryById(@PathVariable ObjectId myId){
-
+    @GetMapping("id/{Id}")
+    public ResponseEntity<JournalEntry> getJournalEntryById(@PathVariable String Id){
+        ObjectId objectId = new ObjectId(Id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User user = userService.findByUserName(userName);
-        List<JournalEntry> collect = user.getJounalEntries().stream().filter(x -> x.getId().equals(myId)).collect(Collectors.toList());
+        List<JournalEntry> collect = user.getJounalEntries().stream().filter(x -> x.getId().equals(objectId)).collect(Collectors.toList());
         if(!collect.isEmpty()){
-            Optional<JournalEntry> journalEntry = journalEntryService.findById(myId);
+            Optional<JournalEntry> journalEntry = journalEntryService.findById(objectId);
             if(journalEntry.isPresent()){
                 return new ResponseEntity<>(journalEntry.get(),HttpStatus.OK);
             }

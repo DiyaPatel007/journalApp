@@ -67,6 +67,23 @@ public class UserService {
     public User findByUserName(String userName){
         return  userRepository.findByUserName(userName);
     }
+
+    public User saveNewUserWithoutPassword(String userName, String email, String providerId, com.eDiya.journalApp.enums.AuthProviderType providerType){
+        try{
+            User user = User.builder()
+                    .userName(userName)
+                    .email(email)
+                    .providerId(providerId)
+                    .authProviderType(providerType)
+                    .roles(Arrays.asList("User"))
+                    .build();
+            userRepository.save(user);
+            return user;
+        }catch (Exception e){
+            log.error("Error Occured for {}",userName,e);
+            return null;
+        }
+    }
 }
 
 // contorller --> service --> repository
