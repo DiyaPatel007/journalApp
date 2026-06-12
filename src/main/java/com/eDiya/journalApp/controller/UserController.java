@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @Tag(name = "User APIs", description = "Endpoints for user operations")
-public class  UserController {
+public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
@@ -33,12 +33,12 @@ public class  UserController {
 
 
     @PutMapping
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String userName =  authentication.getName();
+        String userName = authentication.getName();
         User userInDb = userService.findByUserName(userName);
-        if(userInDb != null){
+        if (userInDb != null) {
             userInDb.setUserName(user.getUserName());
             userInDb.setPassword(user.getPassword());
             userService.saveNewUser(userInDb);
@@ -47,22 +47,22 @@ public class  UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteUserById(){
-        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<?> deleteUserById() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userRepository.deleteByUserName(authentication.getName());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping
-    public ResponseEntity<?> greeting(){
-        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<?> greeting() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userRepository.findByUserName(authentication.getName());
         WeatherResponse weatherResponse = weatherService.getWeather("Mumbai");
-        String greeting ="";
-        if(weatherResponse != null){
+        String greeting = "";
+        if (weatherResponse != null) {
             greeting = ", Weather feels like " + weatherResponse.getCurrent().getFeelsLike();
         }
-        return new ResponseEntity<>("Hi " + authentication.getName() + greeting,HttpStatus.OK);
+        return new ResponseEntity<>("Hi " + authentication.getName() + greeting, HttpStatus.OK);
     }
 
 

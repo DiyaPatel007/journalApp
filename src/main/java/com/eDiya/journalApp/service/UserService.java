@@ -38,10 +38,6 @@ public class UserService {
         }
         catch (Exception e){
             log.error("Error Occured for {}",user.getUserName(),e);
-            log.warn("Warning");
-            log.info("Information");
-            log.debug("Debug");
-            log.trace("Trace");
             return false;
         }
     }
@@ -83,6 +79,10 @@ public class UserService {
             log.error("Error Occured for {}",userName,e);
             return null;
         }
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
 

@@ -41,18 +41,44 @@ public class PublicController {
     }
 
     @PostMapping("/signup")
-    public void signup(@RequestBody UserDTO user) {
+    public ResponseEntity<String> signup(@RequestBody UserDTO user) {
+
+        if (userService.findByUserName(user.getUserName()) != null) {
+            return new ResponseEntity<>("Username already exists!", HttpStatus.CONFLICT);
+        }
+
+        if (user.getEmail() != null && userService.findByEmail(user.getEmail()) != null) {
+            return new ResponseEntity<>("Email already registered!", HttpStatus.CONFLICT);
+        }
+
         User newUser = new User();
         newUser.setEmail(user.getEmail());
         newUser.setUserName(user.getUserName());
         newUser.setPassword(user.getPassword());
         newUser.setSentimentAnalysis(user.isSentimentAnalysis());
-        userService.saveNewUser(newUser);
+
+        boolean saved = userService.saveNewUser(newUser);
+        if(saved){
+            return new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>("Failed to register user!", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user){
+        if (user.getUserName() == null || user.getUserName().isBlank()) {
+            return new ResponseEntity<>("Username is required!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            return new ResponseEntity<>("Password is required!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (userService.findByUserName(user.getUserName()) == null) {
+            return new ResponseEntity<>("User not found!", HttpStatus.NOT_FOUND);
+        }
+
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));

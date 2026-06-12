@@ -37,18 +37,32 @@ public class AuthService {
 
         String email = oAuth2User.getAttribute("email");
 
+        if (email == null || email.isBlank()) {
+            log.error("Email not provided by OAuth2 provider: {}", registrationId);
+            return ResponseEntity.badRequest().body("Email not provided by OAuth2 provider!");
+        }
+
         User emailUser = userRepository.findByEmail(email);
+
         if(user == null && emailUser == null){
             String userName = authUtil.getUsernameFromOAuth2User(oAuth2User, registrationId, providerId);
             user = userService.saveNewUserWithoutPassword(userName,email,providerId,providerType);
 
+            if (user == null) {
+                return ResponseEntity.internalServerError().body("Failed to register user!");
+            }
+
         } else if(user != null) {
-            if(email!=null && !email.isBlank() &&!email.equals(user.getUserName())){
-                user.setUserName(email);
+            if(email!=null && !email.isBlank() && !email.equals(user.getEmail())){
+                user.setEmail(email);
                 userService.saveEntry(user);
             }
         } else {
-            throw new BadCredentialsException("This email is already registered with provider "+ email + " Please login with " + emailUser.getAuthProviderType() + " or use another email to login with " + registrationId);
+            throw new BadCredentialsException(
+                    "This email is already registered with " + emailUser.getAuthProviderType() +
+                            ". Please login with " + emailUser.getAuthProviderType() +
+                            " or use another email to login with " + registrationId
+            );
         }
 
         String jwtToken = jwtUtil.generateToken(user.getUserName());
