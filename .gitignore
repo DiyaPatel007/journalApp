@@ -14,7 +14,6 @@ application-dev.yml
 .settings
 .springBeans
 .sts4-cache
-*.yml
 *.log
 
 ### IntelliJ IDEA ###
